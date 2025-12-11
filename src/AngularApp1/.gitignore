@@ -1,0 +1,112 @@
+##############################
+# .NET (ASP.NET Core) Backend
+##############################
+
+# Build output
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.vscode/
+
+# Logs
+*.log
+
+# ASP.NET Core generated files
+project.lock.json
+project.fragment.lock.json
+
+# Razor files auto-generated
+*.g.cshtml
+*.g.i.cshtml
+
+# Entity Framework Migrations (optional)
+# Uncomment if you generate models automatically and don't track them
+# Migrations/
+
+# NuGet packages
+*.nupkg
+packages/
+.nuget/
+
+# Secrets
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json
+
+# Keep example config
+!appsettings.json
+
+##############################
+# Angular Frontend
+##############################
+
+# Angular build outputs
+dist/
+dist-prod/
+out-tsc/
+
+# Angular cache
+.angular/
+.angular/cache/
+
+# NPM
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Compiled TypeScript
+*.js
+*.js.map
+
+# Angular environment files
+src/environments/environment.ts
+src/environments/environment.development.ts
+src/environments/environment.*.ts
+
+# Allow template files only
+!src/environments/environment.example.ts
+
+##############################
+# General
+##############################
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.code-workspace
+
+# Temporary files
+*.tmp
+*.temp
+
+# dotenv
+.env
+.env.*
+!.env.example
+
+##############################
+# Optional — If you're using Docker
+##############################
+
+docker-compose.override.yml
+docker-compose.*.yml
+*.pid
