@@ -11,4 +11,4 @@ jobs:
     steps: 
       - name: checkout repo
         uses: actions/checkout@v4
-      - run: echo "$(cat src/big-picture/error/hello_world.txt)"
+      - run: echo "$(cat src/big-picture/hello_world.txt)"
