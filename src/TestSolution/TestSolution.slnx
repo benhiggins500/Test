@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ClassLibrary1/ClassLibrary1.csproj" Id="b1703c19-5c07-41d2-9cec-6b23a2bf8789" />
+  <Project Path="EdgeDriverTest1/EdgeDriverTest1.csproj" Id="147cc106-9d79-4188-8238-fec9a39c4f2b" />
+  <Project Path="WebApplication1/WebApplication1.csproj" Id="4e16d964-6a08-4cc0-9128-1683f7ed9501" />
+</Solution>

@@ -1,0 +1,4 @@
+﻿/src/TestSolution/packages/*
+/src/TestSolution/.vs/*
+/src/TestSolution/**/bin/*
+/src/TestSolution/**/obj/*
