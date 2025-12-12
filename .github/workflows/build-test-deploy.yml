@@ -12,6 +12,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-      - run: cd 'src/big-picture'
+      - run: cd './src/big-picture'
       - run: npm install
       - run: npm run build
