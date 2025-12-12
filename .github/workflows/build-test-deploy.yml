@@ -64,7 +64,7 @@ jobs:
         with:
           path: './src/big-picture/out'
       - name: deploy
-        id: deploymnet
+        id: deployment
         uses: actions/deploy-pages@v4
       
       
