@@ -1,7 +1,9 @@
 name: hello-world
 
 # will trigger on push to repo
-#on: push
+on: 
+  #push
+  workflow_dispatch:  # Only runs manually
 
 jobs:
   hello-world-job:
