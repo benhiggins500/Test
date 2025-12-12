@@ -1,0 +1,11 @@
+name: selenium build and test
+on:
+  push
+
+jobs: 
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
