@@ -9,3 +9,8 @@ jobs:
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
+      - name: Setup NuGet to be used with Actions
+        uses: NuGet/setup-nuget@v2.0
+      - run: nuget restore src/TestSolution/TestSolution.slnx
+      
+          
