@@ -1,0 +1,73 @@
+name: build-test-deploy
+on: push
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - name: use node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: npm install --prefix 'src/big-picture/'
+      - run: npm run build --prefix 'src/big-picture/'
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - name: use node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: npm install --prefix 'src/big-picture/'
+      - run: npm test --prefix 'src/big-picture/'
+
+  deploy:
+    needs: test
+
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    environment: 
+      name: production
+      # (url of the deployment) this enables us to pinpoint our environment destination, 'snags' the url from the final deployment step (???)
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: use node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: configure github pages (for deployment)
+        uses: actions/configure-pages@v4
+        with:
+          static_site_generator: next
+      - run: npm install --prefix 'src/big-picture/'
+      - run: npm run build --prefix 'src/big-picture/'
+      - name: upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './src/big-picture/out'
+      - name: deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+      
+      
+    
+      
+      
