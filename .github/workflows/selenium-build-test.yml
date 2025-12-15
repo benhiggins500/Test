@@ -43,7 +43,7 @@ jobs:
       #    searchFolder: 'src/TestSolution/EdgeDriverTest1/bin/Release'
 
       - name: Run tests
-        run: dotnet test src/TestSolution/TestSolution.slnx --configuration Release
+        run: dotnet test src\TestSolution\EdgeDriverTest1\EdgeDriverTest1.csproj --configuration Release
 
       #- name: Run the tests
       #  uses: microsoft/vstest-action@v1.0.0
