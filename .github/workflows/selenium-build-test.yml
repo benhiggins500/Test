@@ -26,7 +26,16 @@ jobs:
         shell: pwsh
         run: Get-ChildItem src/TestSolution -Recurse -Filter "*test*.dll"
 
-
+      - name: Find test DLLs
+        shell: pwsh
+        run: |
+          Get-ChildItem src\TestSolution -Recurse -File -Filter "*test*.dll" |
+          Where-Object {
+          $_.FullName -notmatch '\\obj\\' -and
+          $_.Name -notlike '*TestAdapter.dll'
+          } |
+          ForEach-Object { $_.FullName }
+          
       - name: Run the tests
         uses: microsoft/vstest-action@v1.0.0
         with:
