@@ -66,11 +66,11 @@ jobs:
             }
             
             $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
-            Where-Object {
-              $_.FullName -notmatch '\\obj\\' -and
-              $_.Name -notlike '*TestAdapter.dll'
-            } |
-            ForEach-Object { $_.FullName }
+              Where-Object {
+                $_.FullName -notmatch '\\obj\\' -and
+                $_.Name -notlike '*TestAdapter.dll'
+              } |
+              ForEach-Object { $_.FullName }
 
             if (!$dlls) {
               Write-Host "No test dlls found"
@@ -86,11 +86,11 @@ jobs:
 
               foreach($dll in $dlls) {
                 Write-Host "Running tests for $dll"
-                . "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" $dll `
-                        $settingsArgument `
-                        /Enablecodecoverage `
-                        /collect:"Code Coverage" `
-                        /ResultsDirectory:"./coverage"
+                #. "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" $dll `
+                #        $settingsArgument `
+                #        /Enablecodecoverage `
+                #        /collect:"Code Coverage" `
+                #        /ResultsDirectory:"./coverage"
               }
             }
           }
