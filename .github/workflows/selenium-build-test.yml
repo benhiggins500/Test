@@ -39,7 +39,8 @@ jobs:
       - name: Run the tests
         uses: microsoft/vstest-action@v1.0.0
         with:
-          searchFolder: src/TestSolution/EdgeDriverTest1/bin/Release
+          testAssembly: '**\EdgeDriverTest1.dll'
+          searchFolder: 'src/TestSolution/EdgeDriverTest1/bin/Release'
 
       #- name: Run the tests
       #  uses: microsoft/vstest-action@v1.0.0
