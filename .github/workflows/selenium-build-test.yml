@@ -64,7 +64,14 @@ jobs:
 
       - name: Test        
         shell: pwsh
-        run: |-         
+        run: |-      
+
+          Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"
+          # TODO:
+          $env:VSTEST_PATH = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
+
+          Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"
+          
           if (!$env:TEST_DLLS) {
             Write-Host "No test dlls found"
           }  
