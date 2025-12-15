@@ -44,8 +44,12 @@ jobs:
           New-Item "./CodeCoverage" -ItemType Directory
 
           $paths = 'src/TestSolution/TestSolution.slnx' -split ','
-
+          
+          Write-Host "Processing: $paths"
           foreach ($path in $paths) {
+
+            Write-Host "Processing: $path"
+            
             $filename = [System.IO.Path]::GetFileNameWithoutExtension($path)
             $directory = [System.IO.Path]::GetDirectoryName($path)
   
