@@ -36,14 +36,51 @@ jobs:
           } |
           ForEach-Object { $_.FullName }
 
+      - name: Test
+        shell: pwsh
+        run: |-
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+
+          New-Item "./CodeCoverage" -ItemType Directory
+
+          $paths = 'src/TestSolution/TestSolution.slnx' -split ','
+
+          foreach ($path in $paths) {
+            $filename = [System.IO.Path]::GetFileNameWithoutExtension($path)
+            $directory = [System.IO.Path]::GetDirectoryName($path)
+  
+            $settingsPath = Join-Path $directory "*.runsettings"
+  
+            $settings = Get-ChildItem -Path $settingsPath  | Select-Object -ExpandProperty "FullName"
+  
+            foreach($settingsFile in $settings) {
+              if ($settingsFile.Contains("local.rungsettings")) {
+                Write-Host "Skipping run settings: $settingsFile"
+                continue
+              }
+  
+              Write-Host "Running for settings: $settingsFile"
+  
+              $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*.Tests.dll" -Recurse -Force | Select-Object -ExpandProperty "FullName"
+  
+              foreach($dll in $dlls) {
+                . "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" $dll `
+                  /Settings:$settingsFile `
+                  /Enablecodecoverage `
+                  /collect:"Code Coverage" `
+                  /ResultsDirectory:"./coverage"
+              }
+            }
+          }
+
       #- name: Run the tests
       #  uses: microsoft/vstest-action@v1.0.0
       #  with:
       #    testAssembly: '**\EdgeDriverTest1.dll'
       #    searchFolder: 'src/TestSolution/EdgeDriverTest1/bin/Release'
 
-      - name: Run tests
-        run: dotnet test src\TestSolution\EdgeDriverTest1\EdgeDriverTest1.csproj --configuration Release
+      #- name: Run tests
+      #  run: dotnet test src\TestSolution\EdgeDriverTest1\EdgeDriverTest1.csproj --configuration Release
 
       #- name: Run the tests
       #  uses: microsoft/vstest-action@v1.0.0
