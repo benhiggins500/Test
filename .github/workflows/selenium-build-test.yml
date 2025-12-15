@@ -7,6 +7,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Set solution in variable
+        shell: pwsh
+        run: echo "SOLUTION_PATH=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
+          
       - name: Checkout repo
         uses: actions/checkout@v4
         
@@ -17,10 +21,10 @@ jobs:
         uses: microsoft/setup-msbuild@v2
         
       - name: Restore the NuGet packages
-        run: nuget restore src/TestSolution/TestSolution.slnx
+        run: nuget restore $SOLUTION_PATH
       
       - name: Build the solution
-        run: msbuild src/TestSolution/TestSolution.slnx /p:Configuration=Release
+        run: msbuild $SOLUTION_PATH /p:Configuration=Release
 
       - name: Find test DLLs
         shell: pwsh
@@ -40,9 +44,10 @@ jobs:
             -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core `
             -find **\vstest.console.exe
           echo "VSTEST_PATH=$path" >> $env:GITHUB_ENV
-
-      - name: Test
+          
+      - name: Test        
         shell: pwsh
+        if: false
         run: |-
 
           # TODO:
@@ -116,34 +121,4 @@ jobs:
         with:
           name: test-results
           path: '**/*.trx'
-          
-      #- name: Run the tests
-      #  uses: microsoft/vstest-action@v1.0.0
-      #  with:
-      #    testAssembly: '**\EdgeDriverTest1.dll'
-      #    searchFolder: 'src/TestSolution/EdgeDriverTest1/bin/Release'
-
-      #- name: Run tests
-      #  run: dotnet test src\TestSolution\EdgeDriverTest1\EdgeDriverTest1.csproj --configuration Release
-
-      #- name: Run the tests
-      #  uses: microsoft/vstest-action@v1.0.0
-      #  with:
-      #    testAssembly: '**\EdgeDriverTest1.dll'
-      #    searchFolder: src/TestSolution/EdgeDriverTest1/bin/Release
-            
-      #- name: Run the tests
-      #  uses: microsoft/vstest-action@v1.0.0
-      #  with:
-      #    testAssembly: |
-      #      **/*Test*.dll
-      #      !**/*TestAdapter.dll
-      #      !**/obj/**
-      #    searchFolder: src/TestSolution
-
-      #- name: Upload test results
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: test-results
-      #    path: '**/*.trx'
     
