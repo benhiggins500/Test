@@ -22,6 +22,10 @@ jobs:
       - name: Build the solution
         run: msbuild src/TestSolution/TestSolution.slnx /p:Configuration=Release
 
+      - name: Test what files are there
+        run: dir "src/TestSolution/*"
+
+
       - name: Run the tests
         uses: microsoft/vstest-action@v1.0.0
         with:
