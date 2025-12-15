@@ -35,12 +35,24 @@ jobs:
           $_.Name -notlike '*TestAdapter.dll'
           } |
           ForEach-Object { $_.FullName }
-          
+
       - name: Run the tests
         uses: microsoft/vstest-action@v1.0.0
         with:
-          # Run tests from the specified files
-          #testAssembly: # default is **\\*test*.dll\n!**\\*TestAdapter.dll\n!**\\obj\\**
-          # Folder to search for the test assemblies
-          searchFolder: src/TestSolution/
+          searchFolder: src/TestSolution
+          
+      #- name: Run the tests
+      #  uses: microsoft/vstest-action@v1.0.0
+      #  with:
+      #    # Run tests from the specified files
+      #    #testAssembly: # default is **\\*test*.dll\n!**\\*TestAdapter.dll\n!**\\obj\\**
+      #    # Folder to search for the test assemblies
+      #    searchFolder: src/TestSolution/
+
+
+      #- name: Upload test results
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: test-results
+      #    path: '**/*.trx'
     
