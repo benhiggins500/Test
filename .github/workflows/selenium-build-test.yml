@@ -39,6 +39,10 @@ jobs:
       - name: Run the tests
         uses: microsoft/vstest-action@v1.0.0
         with:
+          testAssembly: |
+            **/*Test*.dll
+            !**/*TestAdapter.dll
+            !**/obj/**
           searchFolder: src/TestSolution
           
       #- name: Run the tests
