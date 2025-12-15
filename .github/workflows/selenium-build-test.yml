@@ -39,20 +39,18 @@ jobs:
       - name: Run the tests
         uses: microsoft/vstest-action@v1.0.0
         with:
-          testAssembly: |
-            **/*Test*.dll
-            !**/*TestAdapter.dll
-            !**/obj/**
-          searchFolder: src/TestSolution
-          
+          testAssembly: EdgeDriverTest1.dll
+          searchFolder: src\TestSolution\EdgeDriverTest1\bin\Release
+      
+      
       #- name: Run the tests
       #  uses: microsoft/vstest-action@v1.0.0
       #  with:
-      #    # Run tests from the specified files
-      #    #testAssembly: # default is **\\*test*.dll\n!**\\*TestAdapter.dll\n!**\\obj\\**
-      #    # Folder to search for the test assemblies
-      #    searchFolder: src/TestSolution/
-
+      #    testAssembly: |
+      #      **/*Test*.dll
+      #      !**/*TestAdapter.dll
+      #      !**/obj/**
+      #    searchFolder: src/TestSolution
 
       #- name: Upload test results
       #  uses: actions/upload-artifact@v4
