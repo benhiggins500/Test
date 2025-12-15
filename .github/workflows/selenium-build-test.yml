@@ -22,10 +22,6 @@ jobs:
       - name: Build the solution
         run: msbuild src/TestSolution/TestSolution.slnx /p:Configuration=Release
 
-      - name: Test what files are there
-        shell: pwsh
-        run: Get-ChildItem src/TestSolution -Recurse -Filter "*test*.dll"
-
       - name: Find test DLLs
         shell: pwsh
         run: |
@@ -39,44 +35,66 @@ jobs:
       - name: Test
         shell: pwsh
         run: |-
+
+          $ENV:SOLUTION_PATHS = "src/TestSolution/TestSolution.sln" 
           dotnet tool install -g dotnet-reportgenerator-globaltool
 
-          New-Item "./CodeCoverage" -ItemType Directory
+          # If Directory doesn't exist, so create it
+          if (-Not(Test-Path -Path "./CodeCoverage" -PathType Container)) {
+            New-Item "./CodeCoverage" -ItemType Directory
+          }
 
-          $paths = 'src/TestSolution/TestSolution.slnx' -split ','
-          
-          Write-Host "Processing: $paths"
+          $paths = $ENV:SOLUTION_PATHS -split ','
+          Write-Host "All solutions: $paths"
+          Write-Host "----------------------"
+          Write-Host ""
+
           foreach ($path in $paths) {
-
-            Write-Host "Processing: $path"
+            Write-Host "Testing solution: $path"
             
             $filename = [System.IO.Path]::GetFileNameWithoutExtension($path)
             $directory = [System.IO.Path]::GetDirectoryName($path)
-  
             $settingsPath = Join-Path $directory "*.runsettings"
-  
-            $settings = Get-ChildItem -Path $settingsPath  | Select-Object -ExpandProperty "FullName"
-  
-            foreach($settingsFile in $settings) {
-              if ($settingsFile.Contains("local.rungsettings")) {
-                Write-Host "Skipping run settings: $settingsFile"
-                continue
+            $settings = Get-ChildItem -Path $directory -Filter "*.runsettings" | Select-Object -ExpandProperty "FullName"
+            if ($settings) {
+              foreach($settingsFile in $settings) {
+                if ($settingsFile.Contains("local.rungsettings")) {
+                  Write-Host "Skipping run settings: $settingsFile"
+                  continue
+                }
               }
-  
-              Write-Host "Running for settings: $settingsFile"
-  
-              $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*.Tests.dll" -Recurse -Force | Select-Object -ExpandProperty "FullName"
-  
+            }
+            
+            $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
+            Where-Object {
+              $_.FullName -notmatch '\\obj\\' -and
+              $_.Name -notlike '*TestAdapter.dll'
+            } |
+            ForEach-Object { $_.FullName }
+
+            if (!$dlls) {
+              Write-Host "No test dlls found"
+            }  
+            else {
+              Write-Host "$dlls.Count test dlls found"
+
+              $settingsArgument = ""
+              if ($settingsFile) {
+                Write-Host "Test settings: $settingsFile"
+                $settingsArgument = "/Settings:$settingsFile"
+              }
+
               foreach($dll in $dlls) {
+                Write-Host "Running tests for $dll"
                 . "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" $dll `
-                  /Settings:$settingsFile `
-                  /Enablecodecoverage `
-                  /collect:"Code Coverage" `
-                  /ResultsDirectory:"./coverage"
+                        $settingsArgument `
+                        /Enablecodecoverage `
+                        /collect:"Code Coverage" `
+                        /ResultsDirectory:"./coverage"
               }
             }
           }
-
+          
       #- name: Run the tests
       #  uses: microsoft/vstest-action@v1.0.0
       #  with:
