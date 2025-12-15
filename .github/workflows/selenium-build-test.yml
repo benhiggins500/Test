@@ -1,4 +1,4 @@
-**\EdgeDriverTest1.dllname: selenium build and test
+name: selenium build and test
 on:
   push
 
@@ -39,7 +39,8 @@ jobs:
       - name: Run the tests
         uses: microsoft/vstest-action@v1.0.0
         with:
-          testAssembly: **\EdgeDriverTest1.dll
+          testAssembly: |
+            **\EdgeDriverTest1.dll
           searchFolder: src\TestSolution\EdgeDriverTest1\bin\Release
             
       #- name: Run the tests
