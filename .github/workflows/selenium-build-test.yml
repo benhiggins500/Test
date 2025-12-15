@@ -71,17 +71,13 @@ jobs:
         shell: pwsh
         run: |-      
 
-          Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"
-          # TODO:
-          $env:VSTEST_PATH = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
-
-          Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"
-          
+          Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
           if (!$env:TEST_DLLS) {
             Write-Host "No test dlls found"
           }  
           else {
-            Write-Host "$env:TEST_DLLS.Count test dlls found"
+            Write-Host "$($env:TEST_DLLS.Count) test dlls found"
+            
             foreach($dll in $env:TEST_DLLS) {
               Write-Host "Running tests for $dll"
               & "$env:VSTEST_PATH" $dll /Logger:trx
@@ -160,7 +156,6 @@ jobs:
           }
           
       - name: Upload test results
-        if: false
         uses: actions/upload-artifact@v4
         with:
           name: test-results
