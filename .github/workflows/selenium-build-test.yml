@@ -37,6 +37,7 @@ jobs:
         run: |-
 
           $ENV:SOLUTION_PATHS = "src/TestSolution/TestSolution.sln" 
+          $env:VSTEST_PATH = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
           dotnet tool install -g dotnet-reportgenerator-globaltool
 
           # If Directory doesn't exist, so create it
@@ -86,6 +87,8 @@ jobs:
 
               foreach($dll in $dlls) {
                 Write-Host "Running tests for $dll"
+
+                & "$env:VSTEST_PATH" $dll /Logger:trx
                 #. "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" $dll `
                 #        $settingsArgument `
                 #        /Enablecodecoverage `
