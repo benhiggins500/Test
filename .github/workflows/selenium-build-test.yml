@@ -32,6 +32,15 @@ jobs:
           } |
           ForEach-Object { $_.FullName }
 
+      - name: Locate vstest.console.exe
+        shell: pwsh
+        run: |
+          $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+            -latest -products * `
+            -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core `
+            -find **\vstest.console.exe
+          echo "VSTEST_PATH=$path" >> $env:GITHUB_ENV
+
       - name: Test
         shell: pwsh
         run: |-
