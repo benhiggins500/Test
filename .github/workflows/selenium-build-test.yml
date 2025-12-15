@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Set solution in variable
+      - name: Set solution variable
         shell: pwsh
         run: echo "SOLUTION_PATH=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
           
@@ -27,14 +27,30 @@ jobs:
         run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
 
       - name: Find test DLLs
+        if: false
         shell: pwsh
         run: |
-          Get-ChildItem src\TestSolution -Recurse -File -Filter "*test*.dll" |
+          Get-ChildItem $env:SOLUTION_PATH -Recurse -File -Filter "*test*.dll" |
           Where-Object {
           $_.FullName -notmatch '\\obj\\' -and
           $_.Name -notlike '*TestAdapter.dll'
           } |
           ForEach-Object { $_.FullName }
+
+      - name: Find test dlls
+        shell: pwsh
+        run: |
+          $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
+          $directory = [System.IO.Path]::GetDirectoryName($env:SOLUTION_PATH)
+          $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
+                  Where-Object {
+                    $_.FullName -notmatch '\\obj\\' -and
+                    $_.Name -notlike '*TestAdapter.dll' -and
+                    $_.Name -notlike 'Microsoft.TestPlatform*.dll' -and
+                    $_.Name -notlike 'Microsoft.VisualStudio*.dll'
+                  } |
+                  ForEach-Object { $_.FullName }
+          echo "TEST_DLLS=$dlls" >> $env:GITHUB_ENV
 
       - name: Locate vstest.console.exe
         shell: pwsh
@@ -51,8 +67,8 @@ jobs:
         run: |-
 
           # TODO:
-          $ENV:SOLUTION_PATHS = "src/TestSolution/TestSolution.sln" 
-          $env:VSTEST_PATH = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
+          #$ENV:SOLUTION_PATHS = "src/TestSolution/TestSolution.sln" 
+          #$env:VSTEST_PATH = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
           
           dotnet tool install -g dotnet-reportgenerator-globaltool
 
@@ -117,6 +133,7 @@ jobs:
           }
           
       - name: Upload test results
+        if: false
         uses: actions/upload-artifact@v4
         with:
           name: test-results
