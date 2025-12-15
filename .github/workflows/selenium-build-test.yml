@@ -23,7 +23,8 @@ jobs:
         run: msbuild src/TestSolution/TestSolution.slnx /p:Configuration=Release
 
       - name: Test what files are there
-        run: dir "src/TestSolution/*"
+        shell: pwsh
+        run: Get-ChildItem src/TestSolution -Recurse -Filter "*test*.dll"
 
 
       - name: Run the tests
