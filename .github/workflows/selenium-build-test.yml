@@ -39,7 +39,10 @@ jobs:
                     $_.Name -notlike 'Microsoft.VisualStudio*.dll'
                   } |
                   ForEach-Object { $_.FullName }
-          echo "TEST_DLLS=$dlls" >> $env:GITHUB_ENV
+          Write-Host "$($dlls.Count) test dlls found"
+
+          # write out as a serialised string serialize (GitHub Actions environment variables only support strings)
+          echo "TEST_DLLS=$($dlls -join ';')" >> $env:GITHUB_ENV
 
       - name: Locate vstest.console.exe
         shell: pwsh
@@ -56,11 +59,14 @@ jobs:
         run: |-      
 
           Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
-          if (!$env:TEST_DLLS) {
+
+          # Get dlls array (GitHub Actions environment variables only support strings)
+          $testDlls = $env:TEST_DLLS -split ';'	
+          if ($testDlls -eq $null -or $testDlls.Count -le 0) {
             Write-Host "No test dlls found"
           }  
           else {
-            Write-Host "$($env:TEST_DLLS.Count) test dlls found"
+            Write-Host "$($testDlls.Count) test dlls found"
             
             foreach($dll in $env:TEST_DLLS) {
               Write-Host "Running tests for $dll"
