@@ -26,17 +26,6 @@ jobs:
       - name: Build the solution
         run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
 
-      - name: Find test DLLs
-        if: false
-        shell: pwsh
-        run: |
-          Get-ChildItem $env:SOLUTION_PATH -Recurse -File -Filter "*test*.dll" |
-          Where-Object {
-          $_.FullName -notmatch '\\obj\\' -and
-          $_.Name -notlike '*TestAdapter.dll'
-          } |
-          ForEach-Object { $_.FullName }
-
       - name: Find test dlls
         shell: pwsh
         run: |
@@ -55,11 +44,6 @@ jobs:
       - name: Locate vstest.console.exe
         shell: pwsh
         run: |
-          #$path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
-          #  -latest -products * `
-          #  -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core `
-          #  -find **\vstest.console.exe |
-          #  Select-Object -First 1
           $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
             -latest -products * `
             -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core `
@@ -81,77 +65,6 @@ jobs:
             foreach($dll in $env:TEST_DLLS) {
               Write-Host "Running tests for $dll"
               & "$env:VSTEST_PATH" $dll /Logger:trx
-            }
-          }
-          
-      - name: Test        
-        shell: pwsh
-        if: false
-        run: |-
-
-          # TODO:
-          #$ENV:SOLUTION_PATHS = "src/TestSolution/TestSolution.sln" 
-          #$env:VSTEST_PATH = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
-          
-          dotnet tool install -g dotnet-reportgenerator-globaltool
-
-          # If Directory doesn't exist, so create it
-          if (-Not(Test-Path -Path "./CodeCoverage" -PathType Container)) {
-            New-Item "./CodeCoverage" -ItemType Directory
-          }
-
-          $paths = $ENV:SOLUTION_PATHS -split ','
-          Write-Host "All solutions: $paths"
-          Write-Host "----------------------"
-          Write-Host ""
-
-          foreach ($path in $paths) {
-            Write-Host "Testing solution: $path"
-            
-            $filename = [System.IO.Path]::GetFileNameWithoutExtension($path)
-            $directory = [System.IO.Path]::GetDirectoryName($path)
-            $settingsPath = Join-Path $directory "*.runsettings"
-            $settings = Get-ChildItem -Path $directory -Filter "*.runsettings" | Select-Object -ExpandProperty "FullName"
-            if ($settings) {
-              foreach($settingsFile in $settings) {
-                if ($settingsFile.Contains("local.rungsettings")) {
-                  Write-Host "Skipping run settings: $settingsFile"
-                  continue
-                }
-              }
-            }
-            
-            $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
-              Where-Object {
-                $_.FullName -notmatch '\\obj\\' -and
-                $_.Name -notlike '*TestAdapter.dll' -and
-                $_.Name -notlike 'Microsoft.TestPlatform*.dll' -and
-                $_.Name -notlike 'Microsoft.VisualStudio*.dll'
-              } |
-              ForEach-Object { $_.FullName }
-
-            if (!$dlls) {
-              Write-Host "No test dlls found"
-            }  
-            else {
-              Write-Host "$dlls.Count test dlls found"
-
-              $settingsArgument = ""
-              if ($settingsFile) {
-                Write-Host "Test settings: $settingsFile"
-                $settingsArgument = "/Settings:$settingsFile"
-              }
-
-              foreach($dll in $dlls) {
-                Write-Host "Running tests for $dll"
-
-                & "$env:VSTEST_PATH" $dll /Logger:trx
-                #. "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" $dll `
-                #        $settingsArgument `
-                #        /Enablecodecoverage `
-                #        /collect:"Code Coverage" `
-                #        /ResultsDirectory:"./coverage"
-              }
             }
           }
           
