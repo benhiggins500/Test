@@ -2,7 +2,15 @@ name: selenium build and test
 on:
   push:
   workflow_dispatch:
-
+      inputs:
+        environment:
+          description: "The environment to deploy the releases to."
+          required: true
+          type: choice
+          options:
+            - dev
+            - pr
+            
 jobs: 
   build:
     runs-on: windows-latest
