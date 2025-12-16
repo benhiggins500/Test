@@ -28,7 +28,7 @@ jobs:
       - name: 'Az CLI login'
         uses: Azure/login@v2.3.0
         with:
-            creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}"}'
+            creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}"}'
             allow-no-subscriptions: true
           
       - name: Checkout repo
