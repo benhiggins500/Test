@@ -1,0 +1,108 @@
+name: selenium build and test
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+          description: "The environment to deploy the releases to."
+          required: true
+          type: choice
+          options:
+            - dev
+            
+jobs: 
+  build:
+    runs-on: windows-latest
+    environment:
+      name: ${{ inputs.environment  }}
+    steps:
+      - name: Set solution variable
+        shell: pwsh
+        run: echo "SOLUTION_PATH=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
+
+      - name: Debug - use
+        shell: pwsh
+        run: | 
+          Write-Host "secrets.AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}"
+
+      - name: 'Az CLI login'
+        uses: Azure/login@v2.3.0
+        with:
+            creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}"}'
+            allow-no-subscriptions: true
+          
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        if: false
+        
+      - name: Setup NuGet to be used with Actions
+        uses: NuGet/setup-nuget@v2.0
+        if: false
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+        if: false
+        
+      - name: Restore the NuGet packages
+        run: nuget restore $env:SOLUTION_PATH
+        if: false
+      
+      - name: Build the solution
+        run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
+        if: false
+
+      - name: Find test dlls
+        shell: pwsh
+        if: false
+        run: |
+          $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
+          $directory = [System.IO.Path]::GetDirectoryName($env:SOLUTION_PATH)
+          $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
+                  Where-Object {
+                    $_.FullName -notmatch '\\obj\\' -and
+                    $_.Name -notlike '*TestAdapter.dll' -and
+                    $_.Name -notlike 'Microsoft.TestPlatform*.dll' -and
+                    $_.Name -notlike 'Microsoft.VisualStudio*.dll'
+                  } |
+                  ForEach-Object { $_.FullName }
+          Write-Host "$($dlls.Count) test dlls found"
+
+          # write out as a serialised string serialize (GitHub Actions environment variables only support strings)
+          echo "TEST_DLLS=$($dlls -join ';')" >> $env:GITHUB_ENV
+
+      - name: Locate vstest.console.exe
+        shell: pwsh
+        if: false
+        run: |
+          $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+            -latest -products * `
+            -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core `
+            -find **\CommonExtensions\Microsoft\TestWindow\vstest.console.exe
+            
+          echo "VSTEST_PATH=$path" >> $env:GITHUB_ENV
+          
+      - name: Test        
+        shell: pwsh
+        if: false
+        run: |
+          Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
+
+          # Get dlls array (GitHub Actions environment variables only support strings)
+          $testDlls = $env:TEST_DLLS -split ';'	
+          if ($testDlls -eq $null -or $testDlls.Count -le 0) {
+            Write-Host "No test dlls found"
+          }  
+          else {
+            Write-Host "$($testDlls.Count) test dlls found"
+            foreach($dll in $testDlls) {
+              Write-Host "Running tests for $dll"
+              & "$env:VSTEST_PATH" $dll /Logger:trx
+            }
+          }
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: false
+        with:
+          name: test-results
+          path: '**/*.trx'
+    
