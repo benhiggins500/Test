@@ -27,6 +27,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
@@ -40,6 +41,7 @@
     <PackageReference Include="Selenium.WebDriver" Version="4.17.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfigTest.cs" />
     <Compile Include="EdgeDriverTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MathTests.cs" />
@@ -54,6 +56,9 @@
       <Project>{b1703c19-5c07-41d2-9cec-6b23a2bf8789}</Project>
       <Name>ClassLibrary1</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

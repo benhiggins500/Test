@@ -1,5 +1,4 @@
 ﻿/src/TestSolution/packages/*
-/src/TestSolution/.vs/*
+/src/TestSolution/**/.vs/*
 /src/TestSolution/**/bin/*
 /src/TestSolution/**/obj/*
-/src/TestSolution/EdgeDriverTest1/.vs/EdgeDriverTest1.csproj.dtbcache.json
