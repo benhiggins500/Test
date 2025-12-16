@@ -24,12 +24,6 @@ jobs:
         shell: pwsh
         run: | 
           Write-Host "secrets.AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}"
-
-      - name: 'Az CLI login'
-        uses: Azure/login@v2.3.0
-        with:
-            creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}"}'
-            allow-no-subscriptions: true
           
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -73,6 +67,12 @@ jobs:
             -find **\CommonExtensions\Microsoft\TestWindow\vstest.console.exe
             
           echo "VSTEST_PATH=$path" >> $env:GITHUB_ENV
+
+      - name: 'Az CLI login'
+        uses: Azure/login@v2.3.0
+        with:
+            creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}"}'
+            allow-no-subscriptions: true
           
       - name: Test        
         shell: pwsh
