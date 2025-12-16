@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: windows-latest
     environment:
-      name: ${{ inputs.environment  }}
+      name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.env || 'dev' }}
     steps:
       - name: Set solution variable
         shell: pwsh
@@ -32,27 +32,21 @@ jobs:
           
       - name: Checkout repo
         uses: actions/checkout@v4
-        if: false
         
       - name: Setup NuGet to be used with Actions
         uses: NuGet/setup-nuget@v2.0
-        if: false
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
-        if: false
         
       - name: Restore the NuGet packages
         run: nuget restore $env:SOLUTION_PATH
-        if: false
       
       - name: Build the solution
         run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
-        if: false
 
       - name: Find test dlls
         shell: pwsh
-        if: false
         run: |
           $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
           $directory = [System.IO.Path]::GetDirectoryName($env:SOLUTION_PATH)
@@ -71,7 +65,6 @@ jobs:
 
       - name: Locate vstest.console.exe
         shell: pwsh
-        if: false
         run: |
           $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
             -latest -products * `
@@ -82,7 +75,6 @@ jobs:
           
       - name: Test        
         shell: pwsh
-        if: false
         run: |
           Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
 
@@ -101,7 +93,6 @@ jobs:
           
       - name: Upload test results
         uses: actions/upload-artifact@v4
-        if: false
         with:
           name: test-results
           path: '**/*.trx'
