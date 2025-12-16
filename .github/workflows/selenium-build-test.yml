@@ -2,8 +2,8 @@ name: selenium build and test
 on:
   push:
   workflow_dispatch:
-      inputs:
-        environment:
+    inputs:
+      environment:
           description: "The environment to deploy the releases to."
           required: true
           type: choice
@@ -13,7 +13,8 @@ on:
 jobs: 
   build:
     runs-on: windows-latest
-
+    environment:
+      name: ${{ inputs.environment  }}
     steps:
       - name: Set solution variable
         shell: pwsh
