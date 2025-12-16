@@ -1,6 +1,7 @@
 name: selenium build and test
 on:
-  push
+  push:
+  workflow_dispatch:
 
 jobs: 
   build:
