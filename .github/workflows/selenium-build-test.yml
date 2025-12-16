@@ -66,8 +66,7 @@ jobs:
           }  
           else {
             Write-Host "$($testDlls.Count) test dlls found"
-            
-            foreach($dll in $env:TEST_DLLS) {
+            foreach($dll in $testDlls) {
               Write-Host "Running tests for $dll"
               & "$env:VSTEST_PATH" $dll /Logger:trx
             }
