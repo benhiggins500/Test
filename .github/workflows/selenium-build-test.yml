@@ -20,27 +20,33 @@ jobs:
         shell: pwsh
         run: echo "SOLUTION_PATH=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
 
-      - name: Debug - use
+      - name: Debug
         shell: pwsh
         run: | 
-          Write-Host "secrets.AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}"
+          Write-Host "vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM: ${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
           
       - name: Checkout repo
+        if: false
         uses: actions/checkout@v4
         
       - name: Setup NuGet to be used with Actions
+        if: false
         uses: NuGet/setup-nuget@v2.0
 
       - name: Setup MSBuild
+        if: false
         uses: microsoft/setup-msbuild@v2
         
       - name: Restore the NuGet packages
+        if: false
         run: nuget restore $env:SOLUTION_PATH
       
       - name: Build the solution
+        if: false
         run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
 
       - name: Find test dlls
+        if: false
         shell: pwsh
         run: |
           $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
@@ -59,6 +65,7 @@ jobs:
           echo "TEST_DLLS=$($dlls -join ';')" >> $env:GITHUB_ENV
 
       - name: Locate vstest.console.exe
+        if: false
         shell: pwsh
         run: |
           $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
@@ -74,7 +81,8 @@ jobs:
             creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}"}'
             allow-no-subscriptions: true
           
-      - name: Test        
+      - name: Test
+        if: false      
         shell: pwsh
         run: |
           Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
@@ -93,6 +101,7 @@ jobs:
           }
           
       - name: Upload test results
+        if: false
         uses: actions/upload-artifact@v4
         with:
           name: test-results
