@@ -11,11 +11,10 @@ jobs:
         shell: pwsh
         run: echo "SOLUTION_PATH=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
 
-      - name: 'Az CLI login'
-        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
-        with:
-            creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}"}'
-            allow-no-subscriptions: true
+      - name: Debug - use
+        shell: pwsh
+        run: | 
+          Write-Host "secrets.AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}"
           
       - name: Checkout repo
         uses: actions/checkout@v4
