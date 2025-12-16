@@ -56,8 +56,7 @@ jobs:
           
       - name: Test        
         shell: pwsh
-        run: |-      
-
+        run: |
           Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
 
           # Get dlls array (GitHub Actions environment variables only support strings)
