@@ -1,7 +1,47 @@
 
 
 function Update-AppConfigXmlAppSettings() {
-	    param(
+	<#
+		.SYNOPSIS
+			Updates an app.config file with a new appSettings section
+
+		.DESCRIPTION
+			This function takes a new appSetting section (as a Base64 string) and replaces the current appSetting section.
+			If no appSetting section exists a new one will be inserted
+			
+			The following command can be used:
+			
+			$xml = @"
+				<appSettings>
+					<add key="Test" value="NewValue" />
+				</appSettings>
+			"@
+			$xmlBase64 = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($xml))
+			$xmlBase64
+			
+
+		.EXAMPLE
+			Update-AppConfigXmlAppSettings $(Join-Path $(Get-Location) "bin/Debug/EdgeDriverTest1.dll.config") "PGFwcFNldHRpbmdzPgo8YWRkIGtleT0iVGVzdCIgdmFsdWU9Ik5ld1ZhbHVlIiAvPgo8L2FwcFNldHRpbmdzPg=="
+			
+			# If the current file contained:
+			#
+			# <?xml version="1.0" encoding="utf-8"?>
+			# <configuration>
+			# 	<appSettings>
+			#	<add key="Test" value="RepoValue" />
+			# </appSettings>
+			# </configuration>
+			#
+			# It would be replaced with:
+			#
+			# <?xml version="1.0" encoding="utf-8"?>
+			# <configuration>
+			# 	<appSettings>
+			# 	<add key="Test" value="NewValue" />
+			# </appSettings>
+			# </configuration>
+	#>
+	param(
         [Parameter(Position = 0, Mandatory)]
         [string] $appConfigXmlPath,
 
