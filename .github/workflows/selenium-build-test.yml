@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     environment:
       name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.env || 'dev' }}
-    steps:
+    steps:  
       - name: Set solution variable
         shell: pwsh
         run: |
@@ -45,7 +45,9 @@ jobs:
                     $_.FullName -notmatch '\\obj\\' -and
                     $_.Name -notlike '*TestAdapter.dll' -and
                     $_.Name -notlike 'Microsoft.TestPlatform*.dll' -and
-                    $_.Name -notlike 'Microsoft.VisualStudio*.dll'
+                    $_.Name -notlike 'Microsoft.VisualStudio*.dll' -and
+                    $_.Name -ne 'Civica.Central.TestAutomation.Framework.dll' -and
+                    $_.Name -ne 'TechTalk.SpecFlow.MSTest.SpecFlowPlugin.dll'
                   } |
                   ForEach-Object { $_.FullName }
           Write-Host "$($dlls.Count) test dlls found"
