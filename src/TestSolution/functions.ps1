@@ -82,8 +82,9 @@ function Update-AppConfigXmlAppSettings() {
 		$configXmlFile.configuration.AppendChild($importedNode) | Out-Null
 	  }
 	  Write-Host ""
-	  Write-Host "Updated file:"
+	  Write-Host "Saving file..."
 	  
 	  # Save the updated XML back to the file
 	  $configXmlFile.Save($appConfigXmlPath)
+	  Write-Host "File saved"
 }
