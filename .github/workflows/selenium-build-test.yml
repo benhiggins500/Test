@@ -36,7 +36,6 @@ jobs:
         run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
 
       - name: Find test dlls
-        if: false
         shell: pwsh
         run: |
           $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
@@ -55,11 +54,26 @@ jobs:
           echo "TEST_DLLS=$($dlls -join ';')" >> $env:GITHUB_ENV
 
       - name: Update dll.confing files
-        if: false
         shell: pwsh
         run: | 
           # Get dlls array (GitHub Actions environment variables only support strings)
-          $testDlls = $env:TEST_DLLS -split ';'	          
+          $testDlls = $env:TEST_DLLS -split ';'	
+          if ($testDlls -eq $null -or $testDlls.Count -le 0) {
+            Write-Host "No test dlls found"
+          }  
+          else {
+            Write-Host "$($testDlls.Count) test dlls found"
+            foreach($dll in $testDlls) {
+              
+              $configFile = "$dll.config"
+              # Check if the config file exists
+              if (Test-Path $configFile) {
+                Write-Host "Updating config file $configFile with appSettings from: {{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
+              } else {
+                Write-Host "Config file $configFile doesn't exist"
+              }
+            }
+          }     
 
       - name: Locate vstest.console.exe
         if: false
@@ -80,6 +94,7 @@ jobs:
             allow-no-subscriptions: true
           
       - name: Test     
+        if: false
         shell: pwsh
         run: |
           Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
@@ -92,17 +107,8 @@ jobs:
           else {
             Write-Host "$($testDlls.Count) test dlls found"
             foreach($dll in $testDlls) {
-              # Check if the config file exists
-              if (Test-Path "$dll.config") {
-                Write-Host "Updating config file $dll.config with appSettings from: {{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
-              } else {
-                Write-Host "Config file $dll.config doesn't exist"
-              }
-              
-              Write-Host "Config file found: $configPath"
-              
               Write-Host "Running tests for $dll"
-              #& "$env:VSTEST_PATH" $dll /Logger:trx
+              & "$env:VSTEST_PATH" $dll /Logger:trx
             }
           }
           
