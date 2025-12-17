@@ -18,40 +18,29 @@ jobs:
     steps:
       - name: Set solution variable
         shell: pwsh
-        run: echo "SOLUTION_PATH=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
-
-      - name: Debug
-        shell: pwsh
-        run: | 
-          Write-Host "vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM: ${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
-          
+        run: |
+          echo "SOLUTION=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
+          echo "SOLUTION_DIR=src/TestSolution" >> $env:GITHUB_ENV
+         
       - name: Checkout repo
-        if: false
         uses: actions/checkout@v4
         
       - name: Setup NuGet to be used with Actions
-        if: false
         uses: NuGet/setup-nuget@v2.0
 
       - name: Setup MSBuild
-        if: false
         uses: microsoft/setup-msbuild@v2
         
       - name: Restore the NuGet packages
-        if: false
-        run: nuget restore $env:SOLUTION_PATH
+        run: nuget restore $env:SOLUTION
       
       - name: Build the solution
-        if: false
-        run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
+        run: msbuild $env:SOLUTION /p:Configuration=Release
 
       - name: Find test dlls
-        if: false
         shell: pwsh
         run: |
-          $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
-          $directory = [System.IO.Path]::GetDirectoryName($env:SOLUTION_PATH)
-          $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
+          $dlls = Get-ChildItem -Path "$env:SOLUTION_DIR\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
                   Where-Object {
                     $_.FullName -notmatch '\\obj\\' -and
                     $_.Name -notlike '*TestAdapter.dll' -and
@@ -63,6 +52,31 @@ jobs:
 
           # write out as a serialised string serialize (GitHub Actions environment variables only support strings)
           echo "TEST_DLLS=$($dlls -join ';')" >> $env:GITHUB_ENV
+
+      - name: Update dll.confing files
+        shell: pwsh
+        run: | 
+          . "$env:SOLUTION_DIR/functions.ps1"
+        
+          # Get dlls array (GitHub Actions environment variables only support strings)
+          $testDlls = $env:TEST_DLLS -split ';'	
+          if ($testDlls -eq $null -or $testDlls.Count -le 0) {
+            Write-Host "No test dlls found"
+          }  
+          else {
+            Write-Host "$($testDlls.Count) test dlls found"
+            foreach($dll in $testDlls) {
+            
+              $configFile = "$dll.config"
+              # Check if the config file exists
+              if (Test-Path $configFile) {
+                Write-Host "Updating config file $configFile with appSettings from: ${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
+                Update-AppConfigXmlAppSettings $configFile "${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
+              } else {
+                Write-Host "Config file $configFile doesn't exist"
+              }
+            }
+          }     
 
       - name: Locate vstest.console.exe
         if: false
@@ -76,13 +90,14 @@ jobs:
           echo "VSTEST_PATH=$path" >> $env:GITHUB_ENV
 
       - name: 'Az CLI login'
+        if: false
         uses: Azure/login@v2.3.0
         with:
             creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}"}'
             allow-no-subscriptions: true
           
-      - name: Test
-        if: false      
+      - name: Test     
+        if: false
         shell: pwsh
         run: |
           Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
