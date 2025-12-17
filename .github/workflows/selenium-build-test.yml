@@ -26,27 +26,21 @@ jobs:
           Write-Host "vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM: ${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
           
       - name: Checkout repo
-        if: false
         uses: actions/checkout@v4
         
       - name: Setup NuGet to be used with Actions
-        if: false
         uses: NuGet/setup-nuget@v2.0
 
       - name: Setup MSBuild
-        if: false
         uses: microsoft/setup-msbuild@v2
         
       - name: Restore the NuGet packages
-        if: false
         run: nuget restore $env:SOLUTION_PATH
       
       - name: Build the solution
-        if: false
         run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
 
       - name: Find test dlls
-        if: false
         shell: pwsh
         run: |
           $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
@@ -76,6 +70,7 @@ jobs:
           echo "VSTEST_PATH=$path" >> $env:GITHUB_ENV
 
       - name: 'Az CLI login'
+        if: false
         uses: Azure/login@v2.3.0
         with:
             creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}"}'
