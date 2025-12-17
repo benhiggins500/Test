@@ -71,6 +71,16 @@ function Update-AppConfigXmlAppSettings() {
 	# Find the old <appSettings> node
 	$oldAppSettingsNode = $configXmlFile.configuration.appSettings
 
+	if ($oldAppSettingsNode -ne $null) {
+		# Replace old <appSettings> with the new one
+		$parent = $oldAppSettingsNode.ParentNode
+		$importedNode = $configXmlFile.ImportNode($newAppSettings.appSettings, $true)
+		$parent.ReplaceChild($importedNode, $oldAppSettingsNode)
+	} else {
+		# If no <appSettings> exists, append it
+		$importedNode = $configXmlFile.ImportNode($newAppSettings.appSettings, $true)
+		$configXmlFile.configuration.AppendChild($importedNode) | Out-Null
+	}
 }
 
 function Update-AppConfigXmlAppSettings2() {
