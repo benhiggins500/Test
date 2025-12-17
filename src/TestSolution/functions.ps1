@@ -1,5 +1,17 @@
 
+
 function Update-AppConfigXmlAppSettings() {
+	    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $appConfigXmlPath,
+
+        [Parameter(Position = 1, Mandatory)]
+        [string] $newAppSettingsXmlAsBase64
+    )
+
+}
+
+function Update-AppConfigXmlAppSettings2() {
 	<#
 		.SYNOPSIS
 			Updates an app.config file with a new appSettings section
