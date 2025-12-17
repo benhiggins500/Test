@@ -49,6 +49,17 @@ function Update-AppConfigXmlAppSettings() {
         [string] $newAppSettingsXmlAsBase64
     )
 
+	Write-Host "appConfigPath: $appConfigXmlPath"
+	Write-Host "newAppSettingsXmlAsBase64: $newAppSettingsXmlAsBase64"
+	  
+	if (-not (Test-Path -Path $appConfigXmlPath -PathType Leaf)) {
+	throw "Required file not found: $appConfigXmlPath"
+	}
+	  
+	[xml]$configXmlFile = Get-Content $appConfigXmlPath
+	Write-Host "Existing Xml:"
+	$configXmlFile.Save([Console]::Out)
+
 }
 
 function Update-AppConfigXmlAppSettings2() {
