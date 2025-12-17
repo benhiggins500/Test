@@ -83,7 +83,6 @@ function Update-AppConfigXmlAppSettings() {
 	  }
 	  Write-Host ""
 	  Write-Host "Updated file:"
-	  $configXmlFile.Save([Console]::Out)
 	  
 	  # Save the updated XML back to the file
 	  $configXmlFile.Save($appConfigXmlPath)
