@@ -25,7 +25,7 @@ jobs:
           
           $requiredVariables = @("SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM")
           foreach ($var in $requiredVariables) {
-            if (-not $vars.$var) {
+            if (-not ${vars.$var}) {
               Write-Error "Missing required environment variable: $var"
             }
           }
