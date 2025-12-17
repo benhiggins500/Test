@@ -70,8 +70,8 @@ jobs:
               $configFile = "$dll.config"
               # Check if the config file exists
               if (Test-Path $configFile) {
-                Write-Host "Updating config file $configFile with appSettings from: {{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
-                Update-AppConfigXmlAppSettings $configFile "{{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
+                Write-Host "Updating config file $configFile with appSettings from: ${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
+                Update-AppConfigXmlAppSettings $configFile "${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
               } else {
                 Write-Host "Config file $configFile doesn't exist"
               }
