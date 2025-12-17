@@ -18,7 +18,9 @@ jobs:
     steps:
       - name: Set solution variable
         shell: pwsh
-        run: echo "SOLUTION_PATH=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
+        run: |
+          echo "SOLUTION=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
+          echo "SOLUTION_DIR=src/TestSolution" >> $env:GITHUB_ENV
          
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -30,17 +32,15 @@ jobs:
         uses: microsoft/setup-msbuild@v2
         
       - name: Restore the NuGet packages
-        run: nuget restore $env:SOLUTION_PATH
+        run: nuget restore $env:SOLUTION
       
       - name: Build the solution
-        run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
+        run: msbuild $env:SOLUTION /p:Configuration=Release
 
       - name: Find test dlls
         shell: pwsh
         run: |
-          $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
-          $directory = [System.IO.Path]::GetDirectoryName($env:SOLUTION_PATH)
-          $dlls = Get-ChildItem -Path "$directory\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
+          $dlls = Get-ChildItem -Path "SOLUTION_DIR\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
                   Where-Object {
                     $_.FullName -notmatch '\\obj\\' -and
                     $_.Name -notlike '*TestAdapter.dll' -and
@@ -56,6 +56,8 @@ jobs:
       - name: Update dll.confing files
         shell: pwsh
         run: | 
+          . "$env:SOLUTION_DIR/functions.ps1"
+        
           # Get dlls array (GitHub Actions environment variables only support strings)
           $testDlls = $env:TEST_DLLS -split ';'	
           if ($testDlls -eq $null -or $testDlls.Count -le 0) {
@@ -64,11 +66,12 @@ jobs:
           else {
             Write-Host "$($testDlls.Count) test dlls found"
             foreach($dll in $testDlls) {
-              
+            
               $configFile = "$dll.config"
               # Check if the config file exists
               if (Test-Path $configFile) {
                 Write-Host "Updating config file $configFile with appSettings from: {{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
+                Update-AppConfigXmlAppSettings $configFile "{{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
               } else {
                 Write-Host "Config file $configFile doesn't exist"
               }
