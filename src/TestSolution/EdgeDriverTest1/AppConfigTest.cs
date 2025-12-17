@@ -17,7 +17,7 @@ namespace EdgeDriverTest1
         {
             // Replace with your own test logic to verify app configuration settings
 
-            #if !DEBUG
+            #if DEBUG
             string expectedValue = "RepoValue";
             #else
             string expectedValue = "NewValue";
