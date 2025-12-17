@@ -25,7 +25,7 @@ jobs:
               Write-Error "Missing required environment variable: $var"
             }
           }
-
+          
           $requiredSecrets = @("DEPLOYMENT_AZURE_CLIENT_ID", "DEPLOYMENT_AZURE_CLIENT_SECRET", "DEPLOYMENT_AZURE_SUBSCRIPTION_ID", "DEPLOYMENT_AZURE_TENANT_ID")
           foreach ($secret in $requiredSecrets) {
             if (-not $secrets.$secret) {
