@@ -1,4 +1,42 @@
-﻿/src/TestSolution/packages/*
-/src/TestSolution/**/.vs/*
-/src/TestSolution/**/bin/*
-/src/TestSolution/**/obj/*
+﻿# Build results
+bin/
+obj/
+[Rr]elease/
+[Dd]ebug/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider files
+.idea/
+
+# Visual Studio Code files
+.vscode/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+# If using PackageReference, you might not need packages/ folder ignored
+
+# ASP.NET temporary files
+App_Data/
+*.log
+*.vspscc
+
+# Backup & temporary files
+*.bak
+*.tmp
+*.cache
+*.swp
+
+# Resharper files
+_ReSharper*/
+*.DotSettings.user
+
+# Publish output
+publish/
