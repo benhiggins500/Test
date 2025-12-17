@@ -16,6 +16,23 @@ jobs:
     environment:
       name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.env || 'dev' }}
     steps:
+      - name: Validation
+        shell: pwsh
+        run: |
+          $requiredVariables = @("DEPLOYMENT_AZURE_CLIENT_ID", "DEPLOYMENT_AZURE_CLIENT_SECRET", "DEPLOYMENT_AZURE_SUBSCRIPTION_ID", "DEPLOYMENT_AZURE_TENANT_ID")
+          foreach ($var in $required) {
+            if (-not $env:$var) {
+              Write-Error "Missing required environment variable: $var"
+            }
+          }
+
+          $requiredSecrets = @("SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM")
+          foreach ($var in $requiredSecrets) {
+            if (-not vars.$var) {
+              Write-Error "Missing required environment secret: $var"
+            }
+          }
+    
       - name: Set solution variable
         shell: pwsh
         run: |
@@ -45,7 +62,9 @@ jobs:
                     $_.FullName -notmatch '\\obj\\' -and
                     $_.Name -notlike '*TestAdapter.dll' -and
                     $_.Name -notlike 'Microsoft.TestPlatform*.dll' -and
-                    $_.Name -notlike 'Microsoft.VisualStudio*.dll'
+                    $_.Name -notlike 'Microsoft.VisualStudio*.dll' -and
+                    $_.Name -ne 'Civica.Central.TestAutomation.Framework.dll' -and
+                    $_.Name -ne 'TechTalk.SpecFlow.MSTest.SpecFlowPlugin.dll'
                   } |
                   ForEach-Object { $_.FullName }
           Write-Host "$($dlls.Count) test dlls found"
