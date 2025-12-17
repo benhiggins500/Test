@@ -16,16 +16,13 @@ namespace EdgeDriverTest1
         public void TestAppConfigSettingDefaultFile()
         {
             // Replace with your own test logic to verify app configuration settings
-            string expectedValue = "RepoValue";
-            string actualValue = ConfigurationManager.AppSettings["Test"];
-            Assert.AreEqual(expectedValue, actualValue, "The app configuration setting does not match the expected value.");
-        }
 
-        [TestMethod]
-        public void TestAppConfigSettingWrittenFile()
-        {
-            // Replace with your own test logic to verify app configuration settings
+            #if !DEBUG
+            string expectedValue = "RepoValue";
+            #else
             string expectedValue = "NewValue";
+            #endif
+
             string actualValue = ConfigurationManager.AppSettings["Test"];
             Assert.AreEqual(expectedValue, actualValue, "The app configuration setting does not match the expected value.");
         }
