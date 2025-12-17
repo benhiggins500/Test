@@ -20,7 +20,7 @@ namespace EdgeDriverTest1
             #if DEBUG
             string expectedValue = "RepoValue";
             #else
-            string expectedValue = "NewValue";
+            string expectedValue = "NewValueA";
             #endif
 
             string actualValue = ConfigurationManager.AppSettings["Test"];
