@@ -60,6 +60,17 @@ function Update-AppConfigXmlAppSettings() {
 	Write-Host "Existing Xml:"
 	$configXmlFile.Save([Console]::Out)
 
+	$bytes = [System.Convert]::FromBase64String($newAppSettingsXmlAsBase64)
+	$newXml = [System.Text.Encoding]::UTF8.GetString($bytes)
+	Write-Host ""
+	Write-Host ""
+	Write-Host "New appSettings section:"
+	Write-Host "$newXml"
+	$newAppSettings = [xml]$newXml
+	  
+	# Find the old <appSettings> node
+	$oldAppSettingsNode = $configXmlFile.configuration.appSettings
+
 }
 
 function Update-AppConfigXmlAppSettings2() {
