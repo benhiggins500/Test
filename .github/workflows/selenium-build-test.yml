@@ -19,7 +19,7 @@ jobs:
       - name: Validation
         shell: pwsh
         run: |
-          $requiredVariables = @("SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM")
+          $requiredVariables = @("SETTINGS_BASE64_INVOLVE_TESTING_SELENIUMAAA")
           foreach ($var in $required) {
             if (-not $env.$var) {
               Write-Error "Missing required environment variable: $var"
