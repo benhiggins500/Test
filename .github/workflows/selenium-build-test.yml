@@ -40,7 +40,7 @@ jobs:
       - name: Find test dlls
         shell: pwsh
         run: |
-          $dlls = Get-ChildItem -Path "SOLUTION_DIR\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
+          $dlls = Get-ChildItem -Path "$env:SOLUTION_DIR\*\bin\*" -Filter "*test*.dll" -Recurse -Force | 
                   Where-Object {
                     $_.FullName -notmatch '\\obj\\' -and
                     $_.Name -notlike '*TestAdapter.dll' -and
