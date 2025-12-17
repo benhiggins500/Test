@@ -20,7 +20,7 @@ jobs:
         shell: pwsh
         run: |
           $requiredVariables = @("SETTINGS_BASE64_INVOLVE_TESTING_SELENIUMAAA")
-          foreach ($var in $required) {
+          foreach ($var in $requiredVariables) {
             if (-not $env.$var) {
               Write-Error "Missing required environment variable: $var"
             }
