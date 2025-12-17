@@ -25,7 +25,7 @@ namespace EdgeDriverTest1
         public void TestAppConfigSettingWrittenFile()
         {
             // Replace with your own test logic to verify app configuration settings
-            string expectedValue = "GitHubValue";
+            string expectedValue = "NewValue";
             string actualValue = ConfigurationManager.AppSettings["Test"];
             Assert.AreEqual(expectedValue, actualValue, "The app configuration setting does not match the expected value.");
         }
