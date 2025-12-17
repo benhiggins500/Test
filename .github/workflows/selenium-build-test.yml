@@ -19,12 +19,7 @@ jobs:
       - name: Set solution variable
         shell: pwsh
         run: echo "SOLUTION_PATH=src/TestSolution/TestSolution.slnx" >> $env:GITHUB_ENV
-
-      - name: Debug
-        shell: pwsh
-        run: | 
-          Write-Host "vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM: ${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
-          
+         
       - name: Checkout repo
         uses: actions/checkout@v4
         
@@ -41,6 +36,7 @@ jobs:
         run: msbuild $env:SOLUTION_PATH /p:Configuration=Release
 
       - name: Find test dlls
+        if: false
         shell: pwsh
         run: |
           $filename = [System.IO.Path]::GetFileNameWithoutExtension($env:SOLUTION_PATH)
@@ -57,6 +53,13 @@ jobs:
 
           # write out as a serialised string serialize (GitHub Actions environment variables only support strings)
           echo "TEST_DLLS=$($dlls -join ';')" >> $env:GITHUB_ENV
+
+      - name: Update dll.confing files
+        if: false
+        shell: pwsh
+        run: | 
+          # Get dlls array (GitHub Actions environment variables only support strings)
+          $testDlls = $env:TEST_DLLS -split ';'	          
 
       - name: Locate vstest.console.exe
         if: false
@@ -76,8 +79,7 @@ jobs:
             creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}"}'
             allow-no-subscriptions: true
           
-      - name: Test
-        if: false      
+      - name: Test     
         shell: pwsh
         run: |
           Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
@@ -90,8 +92,17 @@ jobs:
           else {
             Write-Host "$($testDlls.Count) test dlls found"
             foreach($dll in $testDlls) {
+              # Check if the config file exists
+              if (Test-Path "$dll.config") {
+                Write-Host "Updating config file $dll.config with appSettings from: {{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
+              } else {
+                Write-Host "Config file $dll.config doesn't exist"
+              }
+              
+              Write-Host "Config file found: $configPath"
+              
               Write-Host "Running tests for $dll"
-              & "$env:VSTEST_PATH" $dll /Logger:trx
+              #& "$env:VSTEST_PATH" $dll /Logger:trx
             }
           }
           
