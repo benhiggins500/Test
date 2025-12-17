@@ -19,6 +19,10 @@ jobs:
       - name: Validation
         shell: pwsh
         run: |
+
+          Write-Host "vars.var: $vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM"
+          Write-Host "$env:$var: $env:SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM"
+          
           $requiredVariables = @("SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM")
           foreach ($var in $requiredVariables) {
             if (-not $vars.$var) {
