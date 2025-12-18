@@ -38,7 +38,7 @@ runs:
               	Write-Host "Existing Xml:"
               	$configXmlFile.Save([Console]::Out)
               
-              	$bytes = [System.Convert]::FromBase64String(${{ inputs.new-app-settings-xml-as-base64 }})
+              	$bytes = [System.Convert]::FromBase64String("${{ inputs.new-app-settings-xml-as-base64 }}")
               	$newXml = [System.Text.Encoding]::UTF8.GetString($bytes)
               	Write-Host ""
               	Write-Host "New appSettings section:"
