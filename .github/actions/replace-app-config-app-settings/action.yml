@@ -19,4 +19,4 @@ runs:
       shell: pwsh
       run: | 
         Write-Host "appConfigPath: ${{ inputs.app-config-xml-path }}"
-        Write-Host "newAppSettingsXmlAsBase64: ${{ new-app-settings-xml-as-base64 }}"
+        Write-Host "newAppSettingsXmlAsBase64: ${{ inputs.new-app-settings-xml-as-base64 }}"
