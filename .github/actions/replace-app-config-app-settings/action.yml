@@ -23,7 +23,7 @@ runs:
             Write-Host "No test exe\dlls found"
           }  
           else {
-            Write-Host "$($testDlls.Count) exe\dlls found"
+            Write-Host "$($testDlls.Count) exe\dlls passed in"
 
             # go through each file
             foreach($dll in $testDlls) {
