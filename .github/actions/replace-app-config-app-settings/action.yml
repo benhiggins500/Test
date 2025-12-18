@@ -1,9 +1,9 @@
-name: 'Updates an (exe\dll).config file with a new appSettings section'
-description: 'This function takes a string of dll\exe files seperated by ;.  It searches for a .config file and if it exists the Xml appSettings section is replaced with the new appSetting section passed in (as a Base64 string). If no appSetting section exists a new one will be inserted'
+name: "Updates an (exe\dll).config file with a new appSettings section"
+description: "This function takes a string of dll\exe files seperated by ';'.  It searches for a .config file and if it exists the Xml appSettings section is replaced with the new appSetting section passed in (as a Base64 string). If no appSetting section exists a new one will be inserted"
 
 inputs:
   dll-exe-paths:
-    description: a string containing all the dll\exe files to search for, multiple files can be passed seperated by a ';'
+    description: "A string containing all the dll\exe files to search for, multiple files can be passed seperated by a ';'"
     required: true
   new-app-settings-xml-as-base64:
     description: "The new app settings section in an xml format that is encoded using utf-8 base 64"
