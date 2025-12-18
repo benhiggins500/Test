@@ -1,0 +1,22 @@
+name: 'Deploy Azure Web App via Secure Upload'
+description: 'Deploy an Azure Web App via Azure Storage Account for secure '
+
+inputs:
+  app-config-xml-path: 
+    description: "The path of the app config file"
+    required: true
+new-app-settings-xml-as-base64:
+    description: "The new app settings section in an xml format that is encoded using utf-8 base 64"
+    required: true
+outputs:
+  file-contents:
+    description: "The contents of the new file"
+    value: "Test"
+runs:
+  using: 'composite'
+  steps:
+    - name: Update dll.confing files
+      shell: pwsh
+      run: | 
+        Write-Host "appConfigPath: ${{ inputs.app-config-xml-path }}"
+        Write-Host "newAppSettingsXmlAsBase64: ${{ new-app-settings-xml-as-base64 }}"
