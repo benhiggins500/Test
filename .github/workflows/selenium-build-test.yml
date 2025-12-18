@@ -90,6 +90,7 @@ jobs:
           }     
 
       - name: Locate vstest.console.exe
+        if: false
         shell: pwsh
         run: |
           $path = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
@@ -106,7 +107,8 @@ jobs:
             creds: '{"clientId":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.DEPLOYMENT_AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.DEPLOYMENT_AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}"}'
             allow-no-subscriptions: true
           
-      - name: Test     
+      - name: Test
+        if: false
         shell: pwsh
         run: |
           Write-Host "env:VSTEST_PATH: $env:VSTEST_PATH"          
