@@ -18,5 +18,6 @@ runs:
     - name: Update dll.confing files
       shell: pwsh
       run: | 
-        Write-Host "appConfigPath: ${{ inputs.dll-exe-paths }}"
-        Write-Host "newAppSettingsXmlAsBase64: ${{ inputs.new-app-settings-xml-as-base64 }}"
+        #Write-Host "appConfigPath: ${{ inputs.dll-exe-paths }}"
+        #Write-Host "newAppSettingsXmlAsBase64: ${{ inputs.new-app-settings-xml-as-base64 }}"
+        Write-Host "Hello"
