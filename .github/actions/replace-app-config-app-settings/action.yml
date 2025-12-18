@@ -67,7 +67,7 @@ runs:
               	Get-Content $appConfigXmlPath
                 
               } else {
-                Write-Host "Config file $configFile doesn't exist"
+                Write-Host "Config file $appConfigXmlPath doesn't exist"
               }
             }
           }     
