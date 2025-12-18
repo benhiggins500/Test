@@ -58,6 +58,13 @@ jobs:
           echo "TEST_DLLS=$($dlls -join ';')" >> $env:GITHUB_ENV
 
       - name: Update dll.confing files
+        uses: "./.github/actions/replace-app-config-app-settings"
+        with:
+          app-config-xml-path: Ben
+          new-app-settings-xml-as-base64: ${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}
+
+      - name: Update dll.confing files
+        if: false
         shell: pwsh
         run: | 
           . "$env:SOLUTION_DIR/functions.ps1"
