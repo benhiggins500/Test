@@ -60,7 +60,7 @@ jobs:
       - name: Update dll.confing files
         uses: "./.github/actions/replace-app-config-app-settings"
         with:
-          dll-exe-paths: $env:TEST_DLLS
+          dll-exe-paths: ${{ $env:TEST_DLLS }}
           new-app-settings-xml-as-base64: ${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}
 
       - name: Update dll.confing files
