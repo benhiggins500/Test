@@ -46,9 +46,9 @@ jobs:
                   Where-Object {
                     $_.FullName -notmatch '\\obj\\' -and
                     $_.Name -notlike '*TestAdapter.dll' -and
-                    $_.Name -notlike 'Microsoft.TestPlatform*.dll' -and
-                    $_.Name -notlike 'Microsoft.VisualStudio*.dll' -and
-                    $_.Name -ne 'Civica.Central.TestAutomation.Framework.dll' -and
+                    #$_.Name -notlike 'Microsoft.TestPlatform*.dll' -and
+                    #$_.Name -notlike 'Microsoft.VisualStudio*.dll' -and
+                    #$_.Name -ne 'Civica.Central.TestAutomation.Framework.dll' -and
                     $_.Name -ne 'TechTalk.SpecFlow.MSTest.SpecFlowPlugin.dll'
                   } |
                   ForEach-Object { $_.FullName }
