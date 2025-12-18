@@ -8,17 +8,67 @@ inputs:
   new-app-settings-xml-as-base64:
     description: "The new app settings section in an xml format that is encoded using utf-8 base 64"
     required: true
-outputs:
-  file-contents:
-    description: "The contents of the new file"
-    value: "Test"
 runs:
   using: 'composite'
   steps:
     - name: Update dll.confing files
       shell: pwsh
       run: | 
-        Write-Host "Hello1"
         Write-Host "appConfigPath: ${{ inputs.dll-exe-paths }}"
         Write-Host "newAppSettingsXmlAsBase64: ${{ inputs.new-app-settings-xml-as-base64 }}"
-        Write-Host "Hello2"
+
+        # Get dlls array (GitHub Actions environment variables only support strings)
+          $testDlls = ${{ inputs.dll-exe-paths }} -split ';'	
+          if ($testDlls -eq $null -or $testDlls.Count -le 0) {
+            Write-Host "No test exe\dlls found"
+          }  
+          else {
+            Write-Host "$($testDlls.Count) exe\dlls found"
+
+            # go through each file
+            foreach($dll in $testDlls) {
+              
+              # Check if the config file exists
+              $appConfigXmlPath = "$dll.config"
+              if (Test-Path $appConfigXmlPath) {
+                Write-Host ""
+                Write-Host "Updating config file $appConfigXmlPath with appSettings from passed in variable"
+                #Update-AppConfigXmlAppSettings $configFile "${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
+
+              	[xml]$configXmlFile = Get-Content $appConfigXmlPath
+              	Write-Host "Existing Xml:"
+              	$configXmlFile.Save([Console]::Out)
+              
+              	$bytes = [System.Convert]::FromBase64String(${{ inputs.new-app-settings-xml-as-base64 }})
+              	$newXml = [System.Text.Encoding]::UTF8.GetString($bytes)
+              	Write-Host ""
+              	Write-Host "New appSettings section:"
+              	Write-Host "$newXml"
+              	$newAppSettings = [xml]$newXml
+              	  
+              	# Find the old <appSettings> node
+              	$oldAppSettingsNode = $configXmlFile.configuration.appSettings
+
+              	if ($oldAppSettingsNode -ne $null) {
+              		# Replace old <appSettings> with the new one
+              		$parent = $oldAppSettingsNode.ParentNode
+              		$importedNode = $configXmlFile.ImportNode($newAppSettings.appSettings, $true)
+              		$parent.ReplaceChild($importedNode, $oldAppSettingsNode) | Out-Null
+              	} else {
+              		# If no <appSettings> exists, append it
+              		$importedNode = $configXmlFile.ImportNode($newAppSettings.appSettings, $true)
+              		$configXmlFile.configuration.AppendChild($importedNode) | Out-Null
+              	}
+
+                # Save the updated XML back to the file
+              	$configXmlFile.Save($appConfigXmlPath)
+              	Write-Host "File saved"
+              
+              	# write output
+              	Get-Content $appConfigXmlPath
+                
+              } else {
+                Write-Host "Config file $configFile doesn't exist"
+              }
+            }
+          }     
