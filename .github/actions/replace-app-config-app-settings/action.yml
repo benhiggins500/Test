@@ -18,7 +18,7 @@ runs:
         Write-Host "newAppSettingsXmlAsBase64: ${{ inputs.new-app-settings-xml-as-base64 }}"
 
         # Get dlls array (GitHub Actions environment variables only support strings)
-          $testDlls = ${{ inputs.dll-exe-paths }} -split ';'	
+          $testDlls = "${{ inputs.dll-exe-paths }}" -split ';'	
           if ($testDlls -eq $null -or $testDlls.Count -le 0) {
             Write-Host "No test exe\dlls found"
           }  
