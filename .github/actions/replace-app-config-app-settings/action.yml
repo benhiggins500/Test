@@ -1,5 +1,5 @@
-name: 'Deploy Azure Web App via Secure Upload'
-description: 'Deploy an Azure Web App via Azure Storage Account for secure '
+name: 'Updates an app.config file with a new appSettings section'
+description: 'This function takes a new appSetting section (as a Base64 string) and replaces the current appSetting section. If no appSetting section exists a new one will be inserted'
 
 inputs:
   app-config-xml-path: 
