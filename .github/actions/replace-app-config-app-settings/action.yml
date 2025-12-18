@@ -33,7 +33,6 @@ runs:
               if (Test-Path $appConfigXmlPath) {
                 Write-Host ""
                 Write-Host "Updating config file $appConfigXmlPath with appSettings from passed in variable"
-                #Update-AppConfigXmlAppSettings $configFile "${{ vars.SETTINGS_BASE64_INVOLVE_TESTING_SELENIUM }}"
 
               	[xml]$configXmlFile = Get-Content $appConfigXmlPath
               	Write-Host "Existing Xml:"
